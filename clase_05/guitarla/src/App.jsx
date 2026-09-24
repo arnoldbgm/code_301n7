@@ -4,6 +4,7 @@ import Contactanos from "./pages/Contactanos"
 import Acerca from "./pages/Acerca"
 import Layout from "./layout/Layout"
 import Error404 from "./pages/Error404"
+import Catalogo from "./pages/Catalogo"
 
 export default function App() {
   // 🏅 REGLA DE ORO
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/contacto" element={<Contactanos />} />
         <Route path="/acerca" element={<Acerca />} />
+        <Route path="/catalogo" element={<Catalogo/>} />
         <Route path="*" element={<Error404 />} />
       </Route>
     </Routes>

@@ -1,14 +1,19 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div>
-      <h1>Bienvenidos a Luthier &amp; Co.</h1>
-      <p>Expertos en instrumentos finos desde 1994.</p>
-      <nav>
-        <Link to="/contacto">Contactanos</Link>
-        <Link to="/acerca">Acerca de nosotros</Link>
-      </nav>
+    <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
+      <h1 className="text-5xl font-bold font-serif text-stone-800 mb-4">
+        Luthier &amp; Co.
+      </h1>
+      <p className="text-xl text-stone-600 max-w-lg mb-8">
+        La excelencia de un instrumento hecho a mano.
+      </p>
+      {/* Acá va un Link a "/catalogo" con className y texto "VER CATÁLOGO" */}
+      <Link to="/catalogo"
+      className="border py-2 px-6 bg-black text-white rounded-2xl">
+          Ir al Catálogo
+      </Link>
     </div>
   )
 }
