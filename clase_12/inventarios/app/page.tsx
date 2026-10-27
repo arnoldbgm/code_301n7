@@ -1,5 +1,6 @@
 import Login from "@/components/login/Login";
 import { Button } from "@heroui/react";
+import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 
@@ -7,7 +8,13 @@ export default function HomePage() {
   return (
     <div className="flex h-screen">
       <div className="w-[60%] bg-amber-400">
-        Aqui vendra una imagen
+        <Image 
+          src="/images/wallpaper.webp"
+          alt="Fondo de pantalla"
+          width={1600}
+          height={900}
+          className="object-cover h-full w-full"
+        />
       </div>
       <div className="flex flex-col justify-center w-[40%] p-16">
         <h2 className="font-semibold text-2xl mb-20">SaleSkip</h2>
