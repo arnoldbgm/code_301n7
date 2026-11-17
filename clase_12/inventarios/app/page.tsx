@@ -1,4 +1,5 @@
 import Login from "@/components/login/Login";
+import GithubLoginButton from "@/components/login/GithubLoginButton";
 import { Button } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,6 +22,12 @@ export default function HomePage() {
         <h3 className="font-semibold text-2xl">Bienvenido de nuevo!</h3>
         <p className="text-gray-600">¿No tienes una cuenta? <Link href="/register" className="font-semibold text-black underline">create una cuenta nueva</Link>, es gratis y solo tomara menos de un minuto</p>
         <Login/> 
+        <div className="my-4 flex items-center gap-3">
+          <span className="h-px flex-1 bg-gray-200" />
+          <span className="text-sm text-gray-500">o</span>
+          <span className="h-px flex-1 bg-gray-200" />
+        </div>
+        <GithubLoginButton />
         <Button className="mt-4 w-full" variant="outline">
           <FcGoogle />Iniciar con Google
         </Button>

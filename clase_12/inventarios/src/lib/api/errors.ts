@@ -38,7 +38,13 @@ function errorResponse(
   );
 }
 
-function conflictField(error: Prisma.PrismaClientKnownRequestError) {
+type ConflictInfo = {
+  code: string;
+  message: string;
+  field?: string;
+};
+
+function conflictSources(error: Prisma.PrismaClientKnownRequestError) {
   const target = error.meta?.target;
   const fromMeta = Array.isArray(target)
     ? target.map(String)
@@ -47,11 +53,48 @@ function conflictField(error: Prisma.PrismaClientKnownRequestError) {
       : [];
   const constraint =
     error.message.match(/constraint: `([^`]+)`/)?.[1] ?? "";
-  const sources = [...fromMeta, constraint].filter(Boolean);
 
-  return ["dni", "email"].find((candidate) =>
-    sources.some((value) => value.toLowerCase().includes(candidate)),
+  return [...fromMeta, constraint].map((value) => value.toLowerCase());
+}
+
+function uniqueConflictInfo(
+  error: Prisma.PrismaClientKnownRequestError,
+): ConflictInfo {
+  const sources = conflictSources(error);
+
+  const customerField = ["dni", "email"].find((candidate) =>
+    sources.some((value) => value.includes(candidate)),
   );
+
+  if (customerField) {
+    return {
+      code: "CUSTOMER_ALREADY_EXISTS",
+      field: customerField,
+      message: `A customer with that ${customerField} already exists.`,
+    };
+  }
+
+  if (sources.some((value) => value.includes("code"))) {
+    return {
+      code: "PRODUCT_CODE_ALREADY_EXISTS",
+      field: "code",
+      message: "A product with that code already exists.",
+    };
+  }
+
+  if (sources.some((value) => value.includes("series"))) {
+    return {
+      code: "VOUCHER_NUMBER_CONFLICT",
+      field: "series",
+      message:
+        "The voucher number is already in use. Please retry the operation.",
+    };
+  }
+
+  return {
+    code: "ALREADY_EXISTS",
+    message: "A record with those unique values already exists.",
+  };
 }
 
 export function handleApiError(error: unknown): Response {
@@ -66,15 +109,21 @@ export function handleApiError(error: unknown): Response {
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === "P2002"
   ) {
-    const field = conflictField(error);
+    const info = uniqueConflictInfo(error);
 
+    return errorResponse(409, info.code, info.message, {
+      field: info.field,
+    });
+  }
+
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2003"
+  ) {
     return errorResponse(
       409,
-      "CUSTOMER_ALREADY_EXISTS",
-      field
-        ? `A customer with that ${field} already exists.`
-        : "A customer with those unique values already exists.",
-      { field },
+      "RECORD_IN_USE",
+      "This record is referenced by other records and cannot be deleted.",
     );
   }
 
